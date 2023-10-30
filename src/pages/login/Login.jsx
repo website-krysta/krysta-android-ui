@@ -28,13 +28,14 @@ const Login = () => {
     event.preventDefault();
     try{
       debugger;
-      let res = await axios.post('api/user/',userData );
-      localStorage.setItem('userData', JSON.stringify(res.data));
-      if (res.data.Role == 'admin'){
-        navigate('/users', { replace: true })
-     }else{
-      navigate('/invoice', { replace: true })
-     }
+      let res = await axios.post('api/userlist/',userData );
+      navigate('/orderslist', { replace: true })
+      // localStorage.setItem('userData', JSON.stringify(res.data));
+    //   if (res.data.Role == 'admin'){
+    //     navigate('/users', { replace: true })
+    //  }else{
+    //   navigate('/invoice', { replace: true })
+    //  }
          
     }
     catch(error){
