@@ -1,36 +1,53 @@
 import "./login.scss"
 import './login.css'
 import logo from './images/logo.png';
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 
+import axios from "../../api/axios";
+       
 const Login = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   
-  const handleEmail = (event) => {
-      setEmail(event.target.value)
-  }
-  const handlePassword = (event) =>{
-      setPassword(event.target.value)
-  }
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState({
+    EmailID: '',
+    Password: ''
+  });
 
-  let handleLogin = async () =>{
-    console.log({email,password})
-    try {
-      const response = await axios.post('https://jsonplaceholder.typicode.com/users', {
-        email: email,
-        password: password
-      });
-      console.log(response.data);
-      alert("sucess")
-    } catch (error) {
-      console.error(error);
-      alert("error")
+  const handleChange = (event) => {
+    setUserData({
+      ...userData,
+      [event.target.name]: event.target.value
+    });
+  };
+
+ 
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try{
+      debugger;
+      let res = await axios.post('api/user/',userData );
+      localStorage.setItem('userData', JSON.stringify(res.data));
+      if (res.data.Role == 'admin'){
+        navigate('/users', { replace: true })
+     }else{
+      navigate('/invoice', { replace: true })
+     }
+         
     }
+    catch(error){
+        alert('Invalid credentials. Please check your username and password and try again')
+    }
+    
   }
 
+  useEffect(()=>{
+    handleSubmit();
+  },[]);
+
+  
   return (
     <div className="main-login-sec">
       
@@ -40,20 +57,19 @@ const Login = () => {
       </div>
         <form id="login-form" >
           <div className="mb-3">
-            {/* <label for="exampleInputEmail1" className="form-label">Email address</label> */}
-            <input type="email" value={email} onChange={handleEmail} className="form-control pt-3" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="UserName" />
+      
+            <input type="email" name="EmailID" value={userData.EmailID} onChange={handleChange} className="form-control pt-3" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="UserName" required />
            
           </div>
           <div className="mb-3">
-            {/* <label for="exampleInputPassword1" className="form-label">Password</label> */}
-            <input type="password" value={password} onChange={handlePassword} className="form-control pt-3" id="exampleInputPassword1" placeholder="Password" />
+            <input type="password" name="Password" value={userData.Password} onChange={handleChange} className="form-control pt-3" id="exampleInputPassword1" placeholder="Password" required />
           </div>
           <div className="mb-3 form-check">
             <input type="checkbox" className="form-check-input" id="exampleCheck1" />
             <label className="form-check-label" for="exampleCheck1">Remember Me</label>
           </div>
           <div className="center-btn">
-          <button type="submit" onClick={handleLogin}  className="btn btn-primary text-center">Submit</button>
+          <button type="submit" onClick={handleSubmit}  className="btn login-btn text-center px-5">Submit</button>
           </div>
          
         </form>

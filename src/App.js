@@ -24,7 +24,7 @@ function App() {
              
              
             </Route>
-            <Route path="products">
+            <Route path="orderslist">
               <Route index element={<List />} />
           
              
